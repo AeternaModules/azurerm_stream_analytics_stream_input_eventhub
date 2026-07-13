@@ -27,7 +27,7 @@ EOT
     resource_group_name                            = string
     servicebus_namespace                           = string
     stream_analytics_job_name                      = string
-    authentication_mode                            = optional(string) # Default: "ConnectionString"
+    authentication_mode                            = optional(string)
     eventhub_consumer_group_name                   = optional(string)
     partition_key                                  = optional(string)
     shared_access_policy_key                       = optional(string)
@@ -40,74 +40,16 @@ EOT
       type            = string
     })
   }))
-  validation {
-    condition = alltrue([
-      for k, v in var.stream_analytics_stream_input_eventhubs : (
-        length(v.name) > 0
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.stream_analytics_stream_input_eventhubs : (
-        length(v.stream_analytics_job_name) > 0
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.stream_analytics_stream_input_eventhubs : (
-        v.eventhub_consumer_group_name == null || (length(v.eventhub_consumer_group_name) > 0)
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.stream_analytics_stream_input_eventhubs : (
-        length(v.eventhub_name) > 0
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.stream_analytics_stream_input_eventhubs : (
-        length(v.servicebus_namespace) > 0
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.stream_analytics_stream_input_eventhubs : (
-        v.shared_access_policy_key == null || (length(v.shared_access_policy_key) > 0)
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.stream_analytics_stream_input_eventhubs : (
-        v.shared_access_policy_name == null || (length(v.shared_access_policy_name) > 0)
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.stream_analytics_stream_input_eventhubs : (
-        v.partition_key == null || (length(v.partition_key) > 0)
-      )
-    ])
-    error_message = "must not be empty"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_stream_analytics_stream_input_eventhub's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
   # Review, translate into a real validation{} block above, and delete once confirmed.
+  # path: name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: stream_analytics_job_name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
   # path: resource_group_name
   #   condition: length(value) <= 90
   #   message:   [from resourcegroups.ValidateName: invalid when len(value) > 90]
@@ -122,7 +64,32 @@ EOT
   #   source:    [from resourcegroups.ValidateName: invalid when len(value) == 0]
   # path: resource_group_name
   #   source:    [from resourcegroups.ValidateName] !matched
+  # path: eventhub_consumer_group_name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: eventhub_name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: servicebus_namespace
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: shared_access_policy_key
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: shared_access_policy_name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: partition_key
+  #   condition: length(value) > 0
+  #   message:   must not be empty
   # path: authentication_mode
+  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: serialization.type
+  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: serialization.field_delimiter
+  #   condition: contains([" ", ",", "\t", "|", ";"], value)
+  #   message:   must be one of:  , ,, 	, |, ;
+  # path: serialization.encoding
   #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
 }
 
