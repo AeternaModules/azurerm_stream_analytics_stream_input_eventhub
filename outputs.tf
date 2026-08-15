@@ -28,7 +28,7 @@ output "stream_analytics_stream_input_eventhubs_resource_group_name" {
 }
 output "stream_analytics_stream_input_eventhubs_serialization" {
   description = "Map of serialization values across all stream_analytics_stream_input_eventhubs, keyed the same as var.stream_analytics_stream_input_eventhubs"
-  value       = { for k, v in azurerm_stream_analytics_stream_input_eventhub.stream_analytics_stream_input_eventhubs : k => v.serialization if v.serialization != null && length(v.serialization) > 0 }
+  value       = { for k, v in azurerm_stream_analytics_stream_input_eventhub.stream_analytics_stream_input_eventhubs : k => one(v.serialization) if v.serialization != null && length(v.serialization) > 0 }
 }
 output "stream_analytics_stream_input_eventhubs_servicebus_namespace" {
   description = "Map of servicebus_namespace values across all stream_analytics_stream_input_eventhubs, keyed the same as var.stream_analytics_stream_input_eventhubs"
